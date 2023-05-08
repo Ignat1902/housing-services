@@ -2,6 +2,7 @@ package com.example.housing_and_communal_services.screens.authorization
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -29,6 +30,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -57,12 +59,12 @@ fun RegistrationPage(navController: NavController) {
     val name = remember { mutableStateOf("") }
     val surname = remember { mutableStateOf("") }
     val patronymic = remember { mutableStateOf("") }
-    val telephone = remember { mutableStateOf("+7") }
+    val telephone = remember { mutableStateOf("") }
 
     val scrollState = rememberScrollState()
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.spacedBy(24.dp),
         modifier = Modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.background)
@@ -75,157 +77,152 @@ fun RegistrationPage(navController: NavController) {
             style = MaterialTheme.typography.displayMedium,
             color = MaterialTheme.colorScheme.onBackground
         )
-        Spacer(Modifier.height(24.dp))
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(24.dp)
-        ) {
-            //Номер личного счета
-            OutlinedTextField(
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                value = numberAccount.value,
-                trailingIcon = {
-                    IconButton(onClick = { TODO() }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.baseline_info_24),
-                            contentDescription = "info",
-                        )
-                    }
-                },
-                onValueChange = {
-                    numberAccount.value = it
-                },
-                label = { Text(text = "Номер личного счета") },
-                placeholder = {
-                    Text(
-                        text = "Введите номер ЛС",
-                        maxLines = 1
+
+        //Номер личного счета
+        OutlinedTextField(
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            value = numberAccount.value,
+            trailingIcon = {
+                IconButton(onClick = { TODO() }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_info_24),
+                        contentDescription = "info",
                     )
-                },
-                singleLine = true,
-                modifier = Modifier
-                    .fillMaxWidth(),
-            )
+                }
+            },
+            onValueChange = {
+                numberAccount.value = it
+            },
+            label = { Text(text = "Номер личного счета") },
+            placeholder = {
+                Text(
+                    text = "Введите номер ЛС",
+                    maxLines = 1
+                )
+            },
+            singleLine = true,
+            modifier = Modifier
+                .fillMaxWidth()
+        )
 
-            //Имя
-            OutlinedTextField(
-                value = name.value,
-                onValueChange = {
-                    name.value = it
-                },
-                label = { Text(text = "Имя*") },
-                placeholder = { Text(text = "Введите своё имя", overflow = TextOverflow.Visible) },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                modifier = Modifier
-                    .fillMaxWidth()
-            )
+        //Имя
+        OutlinedTextField(
+            value = name.value,
+            onValueChange = {
+                name.value = it
+            },
+            label = { Text(text = "Имя") },
+            placeholder = { Text(text = "Введите своё имя", overflow = TextOverflow.Visible) },
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+            modifier = Modifier
+                .fillMaxWidth()
+        )
 
-            //Фамилия
-            OutlinedTextField(
-                value = surname.value,
-                onValueChange = {
-                    surname.value = it
-                },
-                label = { Text(text = "Фамилия*") },
-                placeholder = { Text(text = "Введите свою фамилию") },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                modifier = Modifier
-                    .fillMaxWidth()
-            )
+        //Фамилия
+        OutlinedTextField(
+            value = surname.value,
+            onValueChange = {
+                surname.value = it
+            },
+            label = { Text(text = "Фамилия") },
+            placeholder = { Text(text = "Введите свою фамилию") },
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+            modifier = Modifier
+                .fillMaxWidth()
+        )
 
-            //Отчество
-            OutlinedTextField(
-                value = patronymic.value,
-                onValueChange = {
-                    patronymic.value = it
-                },
-                label = { Text(text = "Отчество") },
-                placeholder = { Text(text = "Необязательно") },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                modifier = Modifier
-                    .fillMaxWidth()
-            )
+        //Отчество
+        OutlinedTextField(
+            value = patronymic.value,
+            onValueChange = {
+                patronymic.value = it
+            },
+            label = { Text(text = "Отчество") },
+            placeholder = { Text(text = "Необязательно") },
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+            modifier = Modifier
+                .fillMaxWidth()
+        )
 
-            //Телефон
-            OutlinedTextField(
-                value = telephone.value,
-                onValueChange = {
-                    telephone.value = it
-                },
-                label = { Text(text = "Телефон*") },
-                placeholder = { Text(text = "+7") },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                modifier = Modifier
-                    .fillMaxWidth()
-            )
-            //E-mail
-            OutlinedTextField(
-                value = emailValue.value,
-                onValueChange = {
-                    emailValue.value = it
-                },
-                label = { Text(text = "E-mail*") },
-                placeholder = { Text(text = "Введите E-mail") },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                modifier = Modifier
-                    .fillMaxWidth()
-            )
+        //Телефон
+        OutlinedTextField(
+            value = telephone.value,
+            onValueChange = {
+                telephone.value = it
+            },
+            label = { Text(text = "Телефон") },
+            placeholder = { Text(text = telephone.value) },
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+            modifier = Modifier
+                .fillMaxWidth()
+        )
+        //E-mail
+        OutlinedTextField(
+            value = emailValue.value,
+            onValueChange = {
+                emailValue.value = it
+            },
+            label = { Text(text = "E-mail") },
+            placeholder = { Text(text = "Введите E-mail") },
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            modifier = Modifier
+                .fillMaxWidth()
+        )
 
-            //Пароль
-            OutlinedTextField(
-                value = password.value,
-                trailingIcon = {
-                    IconButton(onClick = { passwordVisibility.value = !passwordVisibility.value }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.password_eye),
-                            contentDescription = "eye",
-                            tint = if (passwordVisibility.value) MaterialTheme.colorScheme.primary else Color.Gray
-                        )
-                    }
-                },
-                onValueChange = {
-                    password.value = it
-                },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                label = { Text(text = "Пароль*") },
-                supportingText = { Text(text = "Введите не менее 6 символов") },
-                placeholder = { Text(text = "Введите пароль") },
-                singleLine = true,
-                modifier = Modifier
-                    .fillMaxWidth(),
-                visualTransformation = if (passwordVisibility.value) VisualTransformation.None else PasswordVisualTransformation(),
-            )
+        //Пароль
+        OutlinedTextField(
+            value = password.value,
+            trailingIcon = {
+                IconButton(onClick = { passwordVisibility.value = !passwordVisibility.value }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.password_eye),
+                        contentDescription = "eye",
+                        tint = if (passwordVisibility.value) MaterialTheme.colorScheme.primary else Color.Gray
+                    )
+                }
+            },
+            onValueChange = {
+                password.value = it
+            },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            label = { Text(text = "Пароль") },
+            supportingText = { Text(text = "Введите не менее 6 символов") },
+            placeholder = { Text(text = "Введите пароль") },
+            singleLine = true,
+            modifier = Modifier
+                .fillMaxWidth(),
+            visualTransformation = if (passwordVisibility.value) VisualTransformation.None else PasswordVisualTransformation(),
+        )
 
-            //Подтвердите пароль
-            OutlinedTextField(
-                value = confirmationPassword.value,
-                trailingIcon = {
-                    IconButton(onClick = { passwordVisibility.value = !passwordVisibility.value }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.password_eye),
-                            contentDescription = "eye",
-                            tint = if (passwordVisibility.value) MaterialTheme.colorScheme.primary else Color.Gray
-                        )
-                    }
-                },
-                onValueChange = {
-                    confirmationPassword.value = it
-                },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                label = { Text(text = "Подтвердите пароль*") },
-                placeholder = { Text(text = "Введите пароль") },
-                singleLine = true,
-                modifier = Modifier
-                    .fillMaxWidth(),
-                visualTransformation = if (passwordVisibility.value) VisualTransformation.None else PasswordVisualTransformation(),
-            )
+        //Подтвердите пароль
+        OutlinedTextField(
+            value = confirmationPassword.value,
+            trailingIcon = {
+                IconButton(onClick = { passwordVisibility.value = !passwordVisibility.value }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.password_eye),
+                        contentDescription = "eye",
+                        tint = if (passwordVisibility.value) MaterialTheme.colorScheme.primary else Color.Gray
+                    )
+                }
+            },
+            onValueChange = {
+                confirmationPassword.value = it
+            },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            label = { Text(text = "Подтверждение пароля") },
+            placeholder = { Text(text = "Подтвердите пароль") },
+            singleLine = true,
+            modifier = Modifier
+                .fillMaxWidth(),
+            visualTransformation = if (passwordVisibility.value) VisualTransformation.None else PasswordVisualTransformation(),
+        )
 
-        }
         //Кнопка регистрации
         Button(
             onClick = {},
@@ -248,14 +245,12 @@ fun RegistrationPage(navController: NavController) {
             text = "У меня уже есть аккаунт",
             textDecoration = TextDecoration.Underline,
             color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.labelSmall,
+            style = MaterialTheme.typography.labelMedium,
             modifier = Modifier
-                .padding(vertical = 10.dp)
+                .padding(top = 10.dp, bottom = 24.dp)
                 .clickable {
                     navController.navigate(Screen.Login.route)
                 }
         )
-
     }
-
 }

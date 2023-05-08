@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "877105994151",
+    "project_id": "jkh-services",
+    "storage_bucket": "jkh-services.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:877105994151:android:f3c978436b2a739899be82",
+        "android_client_info": {
+          "package_name": "com.example.housing_and_communal_services"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "877105994151-kn0jveg3k7b2o226ldp7rcmda304ifq0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBC-q_bNkl1WYC8toh5Uxab0r0d0HDeUiE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "877105994151-kn0jveg3k7b2o226ldp7rcmda304ifq0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

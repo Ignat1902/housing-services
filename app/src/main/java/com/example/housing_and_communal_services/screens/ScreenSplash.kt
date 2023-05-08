@@ -29,7 +29,7 @@ fun StartScreen(navController: NavController) {
     showBars(flag = false)
 
     LaunchedEffect(key1 = true){
-        delay(250)
+        delay(2500L)
         navController.navigate(Screen.Login.route){
             popUpTo(0)
         }

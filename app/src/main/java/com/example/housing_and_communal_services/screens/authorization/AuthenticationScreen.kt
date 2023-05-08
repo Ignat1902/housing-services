@@ -56,6 +56,8 @@ import com.example.compose.md_theme_dark_onBackground
 import com.example.housing_and_communal_services.R
 import com.example.housing_and_communal_services.navigation.Screen
 import com.example.housing_and_communal_services.showBars
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.ktx.Firebase
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -122,8 +124,7 @@ fun LoginPage(navController: NavController) {
             )
             Spacer(Modifier.height(48.dp))
             Button(
-                enabled = false,
-                onClick = { /*TODO*/ },
+                onClick = { Firebase.analytics.logEvent("log_button_click",null) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp)
@@ -142,7 +143,7 @@ fun LoginPage(navController: NavController) {
                 text = "Нет аккаунта?",
                 textDecoration = TextDecoration.Underline,
                 color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.labelSmall,
+                style = MaterialTheme.typography.labelMedium,
                 modifier = Modifier
                     .padding(top = 10.dp)
                     .clickable {
