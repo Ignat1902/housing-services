@@ -1,4 +1,4 @@
-package com.example.housing_and_communal_services.screens
+package com.example.housing_and_communal_services.screens.screen
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
@@ -7,9 +7,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 
 @Composable
-fun HomeScreen() {
+fun RequestsForServicesScreen() {
     Text(
-        text = "Это главная страница",
+        text = "Здесь будет история заявок",
         modifier = Modifier
             .fillMaxSize(),
         textAlign = TextAlign.Center

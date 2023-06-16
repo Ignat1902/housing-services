@@ -1,4 +1,4 @@
-package com.example.housing_and_communal_services.screens
+package com.example.housing_and_communal_services.screens.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,7 +20,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.housing_and_communal_services.R
-import com.example.housing_and_communal_services.navigation.Screen
 import com.example.housing_and_communal_services.showBars
 import kotlinx.coroutines.delay
 
@@ -30,7 +29,7 @@ fun StartScreen(navController: NavController) {
 
     LaunchedEffect(key1 = true){
         delay(2500L)
-        navController.navigate(Screen.Login.route){
+        navController.navigate("auth"){
             popUpTo(0)
         }
     }

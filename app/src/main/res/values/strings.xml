@@ -6,4 +6,6 @@
     <string name="sign_in">Войти</string>
     <string name="registration_name">Регистрация</string>
     <string name="register">Зарегистрироваться</string>
+    <string name="title_activity_first_screen">FirstScreen</string>
+    <string name="title_activity_auth">AuthActivity</string>
 </resources>

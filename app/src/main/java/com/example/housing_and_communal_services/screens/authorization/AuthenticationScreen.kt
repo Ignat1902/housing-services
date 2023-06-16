@@ -1,71 +1,50 @@
 package com.example.housing_and_communal_services.screens.authorization
 
-import android.widget.Scroller
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.*
-import androidx.compose.material.icons.filled.ThumbUp
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.*
-import androidx.compose.material3.AlertDialogDefaults.shape
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCompositionContext
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import com.example.compose.Housing_and_communal_servicesTheme
-import com.example.compose.md_theme_dark_onBackground
 import com.example.housing_and_communal_services.R
-import com.example.housing_and_communal_services.navigation.Screen
 import com.example.housing_and_communal_services.showBars
-import com.google.firebase.analytics.ktx.analytics
-import com.google.firebase.ktx.Firebase
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginPage(navController: NavController) {
+fun LoginPage(
+    loginViewModel: LoginViewModel? = null,
+    onNavToHomePage: () -> Unit,
+    onNavToSignUpPage: () -> Unit
+) {
     showBars(flag = true)
+    val loginUiState = loginViewModel?.loginUiState
+    val isError = loginUiState?.loginError != null
+    val context = LocalContext.current
 
-    val emailValue = remember { mutableStateOf("") }
-    val password = remember { mutableStateOf("") }
     val passwordVisibility = remember { mutableStateOf(false) }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -81,6 +60,13 @@ fun LoginPage(navController: NavController) {
             style = MaterialTheme.typography.displayMedium,
             color = MaterialTheme.colorScheme.onBackground
         )
+        if (isError) {
+            Text(
+                text = loginUiState?.loginError ?: "Неизвестная ошибка",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.error
+            )
+        }
         Spacer(Modifier.height(96.dp))
 
         Column(
@@ -88,20 +74,23 @@ fun LoginPage(navController: NavController) {
             modifier = Modifier.verticalScroll(rememberScrollState())
         ) {
             OutlinedTextField(
-                value = emailValue.value,
+                value = loginUiState?.userName ?: "",
                 onValueChange = {
-                    emailValue.value = it
+                    loginViewModel?.onUserNameChange(it)
                 },
                 label = { Text(text = "Логин") },
                 placeholder = { Text(text = "Введите логин") },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
+                isError = isError
             )
             Spacer(Modifier.height(24.dp))
+
+            //Пароль
             OutlinedTextField(
-                value = password.value,
+                value = loginUiState?.password ?: "",
                 trailingIcon = {
                     IconButton(onClick = { passwordVisibility.value = !passwordVisibility.value }) {
                         Icon(
@@ -112,19 +101,22 @@ fun LoginPage(navController: NavController) {
                     }
                 },
                 onValueChange = {
-                    password.value = it
+                    loginViewModel?.onPasswordNameChange(it)
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 label = { Text(text = "Пароль") },
                 placeholder = { Text(text = "Введите пароль") },
                 singleLine = true,
+                isError = isError,
                 modifier = Modifier
                     .fillMaxWidth(),
                 visualTransformation = if (passwordVisibility.value) VisualTransformation.None else PasswordVisualTransformation(),
             )
             Spacer(Modifier.height(48.dp))
             Button(
-                onClick = { Firebase.analytics.logEvent("log_button_click",null) },
+                onClick = {
+                    loginViewModel?.loginUser(context)
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp)
@@ -147,10 +139,31 @@ fun LoginPage(navController: NavController) {
                 modifier = Modifier
                     .padding(top = 10.dp)
                     .clickable {
-                        navController.navigate(Screen.Registration.route)
+                        onNavToSignUpPage.invoke()
                     }
             )
 
         }
+        if (loginUiState?.isLoading == true){
+            CircularProgressIndicator()
+        }
+
+        LaunchedEffect(key1 = loginViewModel?.hasUser){
+            if (loginViewModel?.hasUser == true){
+                onNavToHomePage.invoke()
+            }
+        }
+
     }
+}
+
+@Preview(showSystemUi = true)
+@Composable
+fun PrevLoginScreen() {
+    Housing_and_communal_servicesTheme() {
+        LoginPage(onNavToHomePage = { /*TODO*/ }) {
+
+        }
+    }
+
 }

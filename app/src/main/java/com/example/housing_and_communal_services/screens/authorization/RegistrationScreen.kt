@@ -2,23 +2,16 @@ package com.example.housing_and_communal_services.screens.authorization
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.*
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.*
 import androidx.compose.material3.IconButton
@@ -26,47 +19,41 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import com.example.compose.Housing_and_communal_servicesTheme
 import com.example.housing_and_communal_services.R
-import com.example.housing_and_communal_services.navigation.Screen
 import com.example.housing_and_communal_services.showBars
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegistrationPage(navController: NavController) {
-    showBars(flag = true)
-    val emailValue = remember { mutableStateOf("") }
-    val password = remember { mutableStateOf("") }
-    val confirmationPassword = remember { mutableStateOf("") }
+fun RegistrationPage(
+    loginViewModel: LoginViewModel? = null,
+    onNavToHomePage: () -> Unit,
+    onNavToLoginPage: () -> Unit
+) {
+    val loginUiState = loginViewModel?.loginUiState
+    val isError = loginUiState?.signUpError != null
+    val context = LocalContext.current
     val passwordVisibility = remember { mutableStateOf(false) }
-    val numberAccount = remember { mutableStateOf("") }
-    val name = remember { mutableStateOf("") }
-    val surname = remember { mutableStateOf("") }
-    val patronymic = remember { mutableStateOf("") }
-    val telephone = remember { mutableStateOf("") }
+    showBars(flag = true)
 
     val scrollState = rememberScrollState()
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(24.dp),
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .padding(horizontal = 32.dp)
             .verticalScroll(scrollState)
@@ -77,11 +64,19 @@ fun RegistrationPage(navController: NavController) {
             style = MaterialTheme.typography.displayMedium,
             color = MaterialTheme.colorScheme.onBackground
         )
+        if (isError) {
+            Text(
+                text = loginUiState?.signUpError ?: "Неизвестная ошибка",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.error
+            )
+        }
 
-        //Номер личного счета
+
+        //"Электронная почта"
         OutlinedTextField(
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            value = numberAccount.value,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            value = loginUiState?.userNameSignUp ?: "",
             trailingIcon = {
                 IconButton(onClick = { TODO() }) {
                     Icon(
@@ -91,12 +86,13 @@ fun RegistrationPage(navController: NavController) {
                 }
             },
             onValueChange = {
-                numberAccount.value = it
+                loginViewModel?.onUserNameChangeSignUp(it)
             },
-            label = { Text(text = "Номер личного счета") },
+            label = { Text(text = "Email") },
+            isError = isError,
             placeholder = {
                 Text(
-                    text = "Введите номер ЛС",
+                    text = "Введите email адрес",
                     maxLines = 1
                 )
             },
@@ -105,78 +101,10 @@ fun RegistrationPage(navController: NavController) {
                 .fillMaxWidth()
         )
 
-        //Имя
-        OutlinedTextField(
-            value = name.value,
-            onValueChange = {
-                name.value = it
-            },
-            label = { Text(text = "Имя") },
-            placeholder = { Text(text = "Введите своё имя", overflow = TextOverflow.Visible) },
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-            modifier = Modifier
-                .fillMaxWidth()
-        )
-
-        //Фамилия
-        OutlinedTextField(
-            value = surname.value,
-            onValueChange = {
-                surname.value = it
-            },
-            label = { Text(text = "Фамилия") },
-            placeholder = { Text(text = "Введите свою фамилию") },
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-            modifier = Modifier
-                .fillMaxWidth()
-        )
-
-        //Отчество
-        OutlinedTextField(
-            value = patronymic.value,
-            onValueChange = {
-                patronymic.value = it
-            },
-            label = { Text(text = "Отчество") },
-            placeholder = { Text(text = "Необязательно") },
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-            modifier = Modifier
-                .fillMaxWidth()
-        )
-
-        //Телефон
-        OutlinedTextField(
-            value = telephone.value,
-            onValueChange = {
-                telephone.value = it
-            },
-            label = { Text(text = "Телефон") },
-            placeholder = { Text(text = telephone.value) },
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-            modifier = Modifier
-                .fillMaxWidth()
-        )
-        //E-mail
-        OutlinedTextField(
-            value = emailValue.value,
-            onValueChange = {
-                emailValue.value = it
-            },
-            label = { Text(text = "E-mail") },
-            placeholder = { Text(text = "Введите E-mail") },
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            modifier = Modifier
-                .fillMaxWidth()
-        )
 
         //Пароль
         OutlinedTextField(
-            value = password.value,
+            value = loginUiState?.passwordSignUp ?: "",
             trailingIcon = {
                 IconButton(onClick = { passwordVisibility.value = !passwordVisibility.value }) {
                     Icon(
@@ -187,7 +115,7 @@ fun RegistrationPage(navController: NavController) {
                 }
             },
             onValueChange = {
-                password.value = it
+                loginViewModel?.onPasswordChangeSignUp(it)
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             label = { Text(text = "Пароль") },
@@ -199,9 +127,9 @@ fun RegistrationPage(navController: NavController) {
             visualTransformation = if (passwordVisibility.value) VisualTransformation.None else PasswordVisualTransformation(),
         )
 
-        //Подтвердите пароль
+        //Подтверждение пароля
         OutlinedTextField(
-            value = confirmationPassword.value,
+            value = loginUiState?.confirmPasswordSignUp ?: "",
             trailingIcon = {
                 IconButton(onClick = { passwordVisibility.value = !passwordVisibility.value }) {
                     Icon(
@@ -212,11 +140,12 @@ fun RegistrationPage(navController: NavController) {
                 }
             },
             onValueChange = {
-                confirmationPassword.value = it
+                loginViewModel?.onConfirmPasswordChangeSignUp(it)
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            label = { Text(text = "Подтверждение пароля") },
-            placeholder = { Text(text = "Подтвердите пароль") },
+            label = { Text(text = "Пароль") },
+            supportingText = { Text(text = "Введите не менее 6 символов") },
+            placeholder = { Text(text = "Введите пароль") },
             singleLine = true,
             modifier = Modifier
                 .fillMaxWidth(),
@@ -225,8 +154,9 @@ fun RegistrationPage(navController: NavController) {
 
         //Кнопка регистрации
         Button(
-            onClick = {},
-            enabled = false,
+            onClick = {
+                loginViewModel?.createUser(context)
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
@@ -249,8 +179,19 @@ fun RegistrationPage(navController: NavController) {
             modifier = Modifier
                 .padding(top = 10.dp, bottom = 24.dp)
                 .clickable {
-                    navController.navigate(Screen.Login.route)
+                    onNavToLoginPage.invoke()
                 }
         )
+
+        if (loginUiState?.isLoading == true){
+            CircularProgressIndicator()
+        }
+
+        LaunchedEffect(key1 = loginViewModel?.hasUser){
+            if (loginViewModel?.hasUser == true){
+                onNavToHomePage.invoke()
+            }
+        }
     }
 }
+
