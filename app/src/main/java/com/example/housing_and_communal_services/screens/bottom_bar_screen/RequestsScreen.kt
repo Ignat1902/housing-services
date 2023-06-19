@@ -34,7 +34,7 @@ fun RequestScreen(servicesViewModel: ServicesViewModel) {
     filteredWorkRequest.value = servicesViewModel.getRequest.filter { it.status == "в обработке" }
 
     val filteredEndRequest = remember { mutableStateOf(emptyList<getRequest>()) }
-    filteredEndRequest.value = servicesViewModel.getRequest.filter { it.status == "Завершена" }
+    filteredEndRequest.value = servicesViewModel.getRequest.filter { it.status == "завершена" }
 
     Column() {
         Row(
@@ -68,9 +68,23 @@ fun RequestScreen(servicesViewModel: ServicesViewModel) {
                 )
             }
         } else if (selectedButton.value == 0) {
-            LazyColumn {
-                items(filteredWorkRequest.value) { request ->
-                    RequestCard(title = request.title, date = request.date, status = request.status)
+            if (!filteredWorkRequest.value.isEmpty()){
+                LazyColumn {
+                    items(filteredWorkRequest.value) { request ->
+                        RequestCard(title = request.title, date = request.date, status = request.status)
+                    }
+                }
+            }else{
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        "Нет новых заявок",
+                        modifier = Modifier.padding(top = 24.dp),
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.titleMedium,
+                    )
                 }
             }
         } else if (!filteredEndRequest.value.isEmpty()) {
@@ -79,7 +93,7 @@ fun RequestScreen(servicesViewModel: ServicesViewModel) {
                     RequestCard(title = request.title, date = request.date, status = request.status)
                 }
             }
-        }else{
+        }else {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxWidth()

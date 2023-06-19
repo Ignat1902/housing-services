@@ -17,7 +17,7 @@ class MeteringDeviceRepository {
     private val firestore = Firebase.firestore
     private val collectionMeterDevice = firestore.collection("Metering device")
     private val collectionMeterReading = firestore.collection("Meter readings")
-    fun getUserId(): String = Firebase.auth.currentUser?.uid.orEmpty()
+    private fun getUserId(): String = Firebase.auth.currentUser?.uid.orEmpty()
 
     suspend fun fetchUserById(): User? {
         val userDocument = firestore.collection("User").document(getUserId()).get().await()

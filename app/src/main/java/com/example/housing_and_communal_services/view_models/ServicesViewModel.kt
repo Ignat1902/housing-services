@@ -60,7 +60,6 @@ class ServicesViewModel(private val repository: ServicesRepository) : ViewModel(
     fun checkRequest(title: String) = viewModelScope.launch {
         val checkRequests = repository.checkRequest(title)
         _checkRequest.value = checkRequests
-        //Log.d("IGNAT","checkRequest = ${checkRequest.value}")
     }
 
     fun createRequest(title: String,context: Context) = viewModelScope.launch {
