@@ -32,4 +32,10 @@ sealed class BottomBarScreen(
         icon =  R.drawable.baseline_format_list_bulleted_24
     )
 
+    object News: BottomBarScreen(
+        route = "news",
+        title = "Новости",
+        icon =  R.drawable.baseline_newspaper_24
+    )
+
 }

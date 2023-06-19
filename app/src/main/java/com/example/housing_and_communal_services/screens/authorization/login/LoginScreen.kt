@@ -1,9 +1,10 @@
-package com.example.housing_and_communal_services.screens.authorization
+package com.example.housing_and_communal_services.screens.authorization.login
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +14,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -28,19 +31,26 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.compose.Housing_and_communal_servicesTheme
 import com.example.housing_and_communal_services.R
+import com.example.housing_and_communal_services.data.repositories.AuthRepository
+import com.example.housing_and_communal_services.data.repositories.FirebaseRequest
 import com.example.housing_and_communal_services.showBars
+import com.example.housing_and_communal_services.view_models.LoginViewModel
 
 @Composable
 fun LoginPage(
     loginViewModel: LoginViewModel? = null,
+    onForgotPass: () -> Unit,
     onNavToHomePage: () -> Unit,
+    onNavToSignUpTelephone: () -> Unit,
     onNavToSignUpPage: () -> Unit
 ) {
     showBars(flag = true)
+
+    val request = FirebaseRequest()
+    val authRepository = AuthRepository()
+
     val loginUiState = loginViewModel?.loginUiState
     val isError = loginUiState?.loginError != null
     val context = LocalContext.current
@@ -74,9 +84,9 @@ fun LoginPage(
             modifier = Modifier.verticalScroll(rememberScrollState())
         ) {
             OutlinedTextField(
-                value = loginUiState?.userName ?: "",
+                value = loginUiState?.login ?: "",
                 onValueChange = {
-                    loginViewModel?.onUserNameChange(it)
+                    loginViewModel?.onLoginChange(it)
                 },
                 label = { Text(text = "Логин") },
                 placeholder = { Text(text = "Введите логин") },
@@ -108,6 +118,15 @@ fun LoginPage(
                 placeholder = { Text(text = "Введите пароль") },
                 singleLine = true,
                 isError = isError,
+                supportingText = {
+                    Text(
+                        text = "Забыли пароль?",
+                        textDecoration = TextDecoration.Underline,
+                        modifier = Modifier.clickable {
+                            onForgotPass.invoke()
+                        }
+                    )
+                },
                 modifier = Modifier
                     .fillMaxWidth(),
                 visualTransformation = if (passwordVisibility.value) VisualTransformation.None else PasswordVisualTransformation(),
@@ -142,28 +161,51 @@ fun LoginPage(
                         onNavToSignUpPage.invoke()
                     }
             )
+            Spacer(modifier = Modifier.height(24.dp))
+            Divider(modifier = Modifier.padding(horizontal = 16.dp))
+            Spacer(modifier = Modifier.height(24.dp))
+            Button(
+                onClick = {
+                    onNavToSignUpTelephone.invoke()
+                },
+                modifier = Modifier
+                    .fillMaxWidth(),
+                shape = RoundedCornerShape(4.dp),
+
+                ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        Icons.Default.Phone,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSecondary
+                    )
+                    Text(
+                        "Войти с помощью телефона",
+                        modifier = Modifier.padding(horizontal = 12.dp)
+                    )
+                }
+            }
 
         }
-        if (loginUiState?.isLoading == true){
+        if (loginUiState?.isLoading == true) {
             CircularProgressIndicator()
         }
 
-        LaunchedEffect(key1 = loginViewModel?.hasUser){
-            if (loginViewModel?.hasUser == true){
-                onNavToHomePage.invoke()
+
+        LaunchedEffect(key1 = loginViewModel?.hasUser) {
+            if (loginViewModel?.hasUser == true) {
+                request.isDocumentExists("User", authRepository.getUserId()) { exists ->
+                    if (exists) {
+                        onNavToHomePage.invoke()
+                    }
+                }
             }
         }
 
     }
-}
-
-@Preview(showSystemUi = true)
-@Composable
-fun PrevLoginScreen() {
-    Housing_and_communal_servicesTheme() {
-        LoginPage(onNavToHomePage = { /*TODO*/ }) {
-
-        }
-    }
-
 }

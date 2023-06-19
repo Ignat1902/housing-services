@@ -9,14 +9,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navigation
-import com.example.housing_and_communal_services.AuthActivity
-import com.example.housing_and_communal_services.screens.authorization.AccountNumberEntryPage
-import com.example.housing_and_communal_services.screens.authorization.LoginPage
-import com.example.housing_and_communal_services.screens.authorization.LoginViewModel
-import com.example.housing_and_communal_services.screens.authorization.PersonalDataEntryScreen
-import com.example.housing_and_communal_services.screens.authorization.RegistrationPage
+import com.example.housing_and_communal_services.SecondActivity
+import com.example.housing_and_communal_services.screens.authorization.registration.AccountNumberEntryPage
+import com.example.housing_and_communal_services.screens.authorization.login.ForgotPasswordScreen
+import com.example.housing_and_communal_services.screens.authorization.login.LoginPage
+import com.example.housing_and_communal_services.view_models.LoginViewModel
+import com.example.housing_and_communal_services.screens.authorization.registration.RegistrationPage
 import com.example.housing_and_communal_services.screens.authorization.RegistrationTelephonePage
+import com.example.housing_and_communal_services.screens.authorization.WelcomeScreen
 import com.example.housing_and_communal_services.screens.screen.StartScreen
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -26,116 +26,93 @@ fun SetupNavGraph(
     loginViewModel: LoginViewModel
 ) {
     val context = LocalContext.current
-    val intent = remember { Intent(context, AuthActivity::class.java) }
-    NavHost(navController = navHostController, startDestination = Screen.screenSplash.route) {
-        composable(Screen.screenSplash.route) {
+    val intent = remember { Intent(context, SecondActivity::class.java) }
+    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+    NavHost(navController = navHostController, startDestination = Screen.SplashScreen.route) {
+        composable(Screen.SplashScreen.route) {
             StartScreen(navController = navHostController)
         }
-        navigation(
-            startDestination = Screen.RegistrationTel.route,
-            route = "auth"
-        ) {
-            composable(Screen.RegistrationTel.route) {
-                RegistrationTelephonePage(
-                    onHomePage = {
-                        context.startActivity(intent)
-                    /*navHostController.navigate(Screen.MainScreen.route) {
-                        launchSingleTop = true
-                        popUpTo(Screen.RegistrationTel.route) {
-                            inclusive = true
-                        }
-                    }*/
+
+        composable(Screen.Welcome.route) {
+            WelcomeScreen(navController = navHostController, loginViewModel, onNavToHomePage = {
+                context.startActivity(intent)
+            })
+        }
+
+        composable(Screen.RegistrationTel.route) {
+            RegistrationTelephonePage(
+                onHomePage = {
+                    context.startActivity(intent)
                 },
-                    loginViewModel = loginViewModel,
-                    onRegistrationPage = {
-                        navHostController.navigate(Screen.AccountNumberEntryPage.route) {
-                            launchSingleTop = true
-                            popUpTo(Screen.RegistrationTel.route) {
-                                inclusive = true
-                            }
-                        }
-                    }
-                )
-            }
-
-            composable(Screen.AccountNumberEntryPage.route) {
-                AccountNumberEntryPage(
-                    onNextPage = {
-                        navHostController.navigate(Screen.PersonalDataEntryPage.route) {
-                            /*launchSingleTop = true
-                            popUpTo(Screen.RegistrationTel.route){
-                                inclusive = true
-                            }*/
-                        }
-                    }
-                )
-            }
-
-            composable(Screen.AddressConfirmationPage.route) {
-
-            }
-
-            composable(Screen.PersonalDataEntryPage.route) {
-                PersonalDataEntryScreen(onNextPage = {
-                    navHostController.navigate("home") {
+                loginViewModel = loginViewModel,
+                onRegistrationPage = {
+                    navHostController.navigate(Screen.AccountNumberEntryPage.route) {
                         launchSingleTop = true
-                        popUpTo("auth") {
-                            inclusive = true
-                        }
                     }
-                })
-            }
-
-            composable(Screen.Registration.route) {
-                RegistrationPage(
-                    onNavToHomePage = {
-                        navHostController.navigate("home") {
-                            popUpTo(Screen.Registration.route) {
-                                inclusive = true
-                            }
-                        }
-                    },
-                    loginViewModel = loginViewModel
-                ) {
-                    navHostController.navigate(Screen.Login.route)
                 }
-            }
+            )
+        }
 
-            //переход на страницу логина
-            composable(Screen.Login.route) {
-                LoginPage(
-                    onNavToHomePage = {
-                        navHostController.navigate("home") {
-                            launchSingleTop = true
-                            popUpTo(Screen.Login.route) {
-                                inclusive = true
-                            }
-                        }
-                    },
-                    loginViewModel = loginViewModel
-                ) {
+        composable(Screen.AccountNumberEntryPage.route) {
+            AccountNumberEntryPage(
+                loginViewModel = loginViewModel,
+                onNextPage = {
                     navHostController.navigate(Screen.Registration.route) {
                         launchSingleTop = true
-                        popUpTo(Screen.Login.route) {
-                            inclusive = true
-                        }
+                    }
+                }
+            )
+        }
+        composable(Screen.Registration.route) {
+            RegistrationPage(
+                onNavToHomePage = {
+                    context.startActivity(intent)
+                },
+                loginViewModel = loginViewModel
+            ) {
+                navHostController.navigate(Screen.Login.route) {
+                    launchSingleTop = true
+                }
+            }
+        }
+
+        //переход на страницу логина
+        composable(Screen.Login.route) {
+            LoginPage(
+                onNavToHomePage = {
+                    context.startActivity(intent)
+                },
+                loginViewModel = loginViewModel,
+                onNavToSignUpTelephone = {
+                    navHostController.navigate(Screen.RegistrationTel.route) {
+                        launchSingleTop = true
+                    }
+                },
+                onForgotPass = {
+                    navHostController.navigate(Screen.ForgotPassword.route) {
+                        launchSingleTop = true
+                    }
+                },
+            ) {
+                navHostController.navigate(Screen.Registration.route) {
+                    launchSingleTop = true
+                    popUpTo(Screen.Login.route) {
+                        inclusive = true
                     }
                 }
             }
         }
 
-       /* navigation(
-            startDestination = Screen.MainScreen.route,
-            route = "home"
-        ) {
-            composable(Screen.MainScreen.route) {
-                MainScreen()
-            }
-            composable(Screen.Profile.route) {
+        composable(Screen.ForgotPassword.route) {
+            ForgotPasswordScreen(
+                viewModel = loginViewModel,
+                onNavToHomePage = {
+                    context.startActivity(intent)
 
-            }
-        }*/
-
+                },
+            )
+        }
     }
 }
+
 

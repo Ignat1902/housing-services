@@ -20,16 +20,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.housing_and_communal_services.R
+import com.example.housing_and_communal_services.navigation.Screen
 import com.example.housing_and_communal_services.showBars
 import kotlinx.coroutines.delay
 
 @Composable
-fun StartScreen(navController: NavController) {
+fun StartScreen(
+    navController: NavController
+) {
     showBars(flag = false)
-
-    LaunchedEffect(key1 = true){
+    LaunchedEffect(key1 = true) {
         delay(2500L)
-        navController.navigate("auth"){
+        navController.navigate(Screen.Welcome.route) {
             popUpTo(0)
         }
     }
@@ -49,12 +51,13 @@ fun StartScreen(navController: NavController) {
         Spacer(Modifier.height(24.dp))
         Greeting(name = "ЖКХ\nВашего Дома")
     }
+
 }
+
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
+fun Greeting(name: String) {
     Text(
         text = name,
-        modifier = modifier,
         style = MaterialTheme.typography.displayMedium,
         textAlign = TextAlign.Center,
         fontWeight = FontWeight.SemiBold,

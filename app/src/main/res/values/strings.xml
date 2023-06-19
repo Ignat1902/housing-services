@@ -2,10 +2,10 @@
     <string name="app_name">Housing_and_communal_services</string>
     <string name="registration">Регистрация</string>
     <string name="personal_account_number">Номер личного счета</string>
-    <string name="authorization">Авторизация</string>
+    <string name="authorization">Вход</string>
     <string name="sign_in">Войти</string>
     <string name="registration_name">Регистрация</string>
     <string name="register">Зарегистрироваться</string>
     <string name="title_activity_first_screen">FirstScreen</string>
-    <string name="title_activity_auth">AuthActivity</string>
+    <string name="title_activity_second">SecondActivity</string>
 </resources>

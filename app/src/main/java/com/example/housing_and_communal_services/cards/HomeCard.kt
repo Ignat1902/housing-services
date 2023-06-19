@@ -8,12 +8,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -21,20 +18,25 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.housing_and_communal_services.R
+import com.example.housing_and_communal_services.data.models.User
 
 @Composable
 fun HomeCard(
-    flat: String,
-    city: String,
-    street: String,
-    home: String,
-    balance: String,
-
+    user: User,
 ) {
+
+    fun getKvParts(user: User): Pair<String?, String?> {
+        val kvIndex = user.address?.indexOf(", кв.") ?: -1
+        if (kvIndex == -1) return Pair(null, null)
+        val kvValue = user.address?.substring(kvIndex + 5)?.trim()
+        val addressValue = user.address?.substring(0, kvIndex)?.trim()
+        return Pair(addressValue, kvValue)
+    }
+
+    val (address, kvValue) = getKvParts(user)
+
     Card(
         modifier = Modifier.padding(16.dp),
-        border = ButtonDefaults.outlinedButtonBorder,
-        colors = CardDefaults.outlinedCardColors(),
         shape = RoundedCornerShape(8.dp),
     ) {
         Column(
@@ -44,7 +46,6 @@ fun HomeCard(
             Row(
                 Modifier
                     .padding(
-                        //horizontal = 12.dp,
                         vertical = 16.dp
                     )
                     .fillMaxWidth(),
@@ -68,19 +69,27 @@ fun HomeCard(
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     Text(
-                        text = "Квартира $flat",
-                        style = MaterialTheme.typography.titleMedium,
-                        textAlign = TextAlign.Center
+                        text = "Квартира $kvValue",
+                        style = MaterialTheme.typography.titleLarge,
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.onBackground
                     )
-                    Text(
-                        text = "г. $city," + " ул. $street, $home",
-                        style = MaterialTheme.typography.bodyMedium,
-                        textAlign = TextAlign.Center
-                    )
+
+
+                    if (address != null) {
+                        Text(
+                            text = address,
+                            style = MaterialTheme.typography.bodyMedium,
+                            textAlign = TextAlign.Start,
+                            color = MaterialTheme.colorScheme.tertiary
+                        )
+                    }
+
+
                 }
             }
 
-            Text(
+            /*Text(
                 text = "Баланс",
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onBackground,
@@ -101,26 +110,30 @@ fun HomeCard(
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
                 OutlinedButton(
-                    colors = ButtonDefaults.filledTonalButtonColors(
-                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                        containerColor = MaterialTheme.colorScheme.primaryContainer
-                    ),
-                    border = null,
-                    onClick = { /*TODO*/ }
-                ) {
-                    Text(text = "История платежей")
-                }
-                OutlinedButton(
+                    *//*colors = ButtonDefaults.filledTonalButtonColors(
+                        contentColor = MaterialTheme.colorScheme.onSurface,
+                        containerColor = MaterialTheme.colorScheme.inverseOnSurface
+                    ),*//*
                     colors = ButtonDefaults.filledTonalButtonColors(
                         contentColor = MaterialTheme.colorScheme.onPrimary,
                         containerColor = MaterialTheme.colorScheme.primary
                     ),
                     border = null,
-                    onClick = { /*TODO*/ }
+                    onClick = { *//*TODO*//* }
+                ) {
+                    Text(text = "История платежей")
+                }
+                *//*OutlinedButton(
+                    colors = ButtonDefaults.filledTonalButtonColors(
+                        contentColor = MaterialTheme.colorScheme.onPrimary,
+                        containerColor = MaterialTheme.colorScheme.primary
+                    ),
+                    border = null,
+                    onClick = { *//**//*TODO*//**//* }
                 ) {
                     Text(text = "Оплатить")
-                }
-            }
+                }*//*
+            }*/
 
         }
     }

@@ -1,4 +1,4 @@
-package com.example.housing_and_communal_services.screens.screen
+package com.example.housing_and_communal_services.screens.bottom_bar_screen
 
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -15,7 +15,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -28,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,26 +39,39 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.housing_and_communal_services.R
 import com.example.housing_and_communal_services.data.models.MeterReading
 import com.example.housing_and_communal_services.data.models.MeterStatus
 import com.example.housing_and_communal_services.data.models.MeteringDevice
+import com.example.housing_and_communal_services.data.models.User
 import com.example.housing_and_communal_services.data.repositories.MeteringDeviceRepository
 import com.example.housing_and_communal_services.view_models.MeterViewModel
 import com.example.housing_and_communal_services.view_models.MeterViewModelFactory
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 
 @Composable
-fun MeteringDevicesScreen() {
+fun MeteringDevicesScreen(navController: NavController) {
+
+    var user by remember { mutableStateOf<User?>(null) }
+    val coroutineScope = rememberCoroutineScope()
+    LaunchedEffect(Unit) {
+        coroutineScope.launch {
+            val meteringDeviceRepository = MeteringDeviceRepository()
+            user = meteringDeviceRepository.fetchUserById()
+        }
+    }
 
     val viewModel: MeterViewModel = viewModel(
         factory = MeterViewModelFactory(
             MeteringDeviceRepository()
         )
     )
+
     val meteringDevices by viewModel.meteringDevices.collectAsState()
     val lastMeterReadingsMap by viewModel.lastMeterReadingsMap.observeAsState(emptyMap())
     val serialNumbers = meteringDevices.map { it.serial_number }
@@ -70,17 +83,23 @@ fun MeteringDevicesScreen() {
             .let { viewModel.checkIfLastReadingIsCurrentMonthAndYear(it as List<String>) }
     }
 
-    viewModel.fetchMeteringDevices("г. Владимир, ул. Новгородская, д. 5, кв. 86")
+    user?.address?.let { viewModel.fetchMeteringDevices(it) }
     viewModel.updateLastMeterReadings(meteringDevices.map { it.serial_number!! })
 
     if (meteringDevices.isEmpty()) {
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Text("По вашему адресу нет счетчиков")
+            Text(
+                "По вашему адресу не найдено счетчиков, необходимо сделать поверку",
+                modifier = Modifier.padding(top = 24.dp),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleMedium,
+            )
         }
     } else {
-        MeterList(meteringDevices, lastMeterReadingsMap,meterStatusMap, viewModel)
+        MeterList(meteringDevices, lastMeterReadingsMap, meterStatusMap, viewModel, navController)
     }
 }
 
@@ -90,27 +109,31 @@ fun MeterList(
     meteringDevices: List<MeteringDevice>,
     lastMeterReadingsMap: Map<String, MeterReading?>,
     meterStatusMap: Map<String, MeterStatus>,
-    viewModel: MeterViewModel
+    viewModel: MeterViewModel,
+    navController: NavController
 ) {
     LazyColumn {
-        items(meteringDevices) { meteringDevice, ->
+        items(meteringDevices) { meteringDevice ->
             Column(modifier = Modifier.padding(16.dp)) {
                 CounterCard(
                     meteringDevice = meteringDevice,
                     lastMeterReadingsMap = lastMeterReadingsMap,
                     viewModel = viewModel,
-                    isCurrentMonthAndYear = meterStatusMap
+                    isCurrentMonthAndYear = meterStatusMap,
+                    navController = navController
                 )
             }
         }
     }
 }
+
 @Composable
 fun CounterCard(
     meteringDevice: MeteringDevice,
     lastMeterReadingsMap: Map<String, MeterReading?>,
     viewModel: MeterViewModel,
-    isCurrentMonthAndYear: Map<String, MeterStatus>
+    isCurrentMonthAndYear: Map<String, MeterStatus>,
+    navController: NavController
 ) {
     val context = LocalContext.current
     var inputValue by remember { mutableStateOf("") }
@@ -124,8 +147,8 @@ fun CounterCard(
 
 
     Card(
-        border = ButtonDefaults.outlinedButtonBorder,
-        colors = CardDefaults.outlinedCardColors(),
+        /*border = ButtonDefaults.outlinedButtonBorder,
+        colors = CardDefaults.outlinedCardColors(),*/
         shape = RoundedCornerShape(8.dp),
     ) {
         Column(
@@ -145,9 +168,9 @@ fun CounterCard(
                     modifier = Modifier.size(48.dp),
                     tint =
                     when (meteringDevice.name) {
-                        "Холодная вода" -> MaterialTheme.colorScheme.inversePrimary
+                        "Холодная вода" -> MaterialTheme.colorScheme.onSurface
                         "Горячая вода" -> MaterialTheme.colorScheme.error
-                        "Газ" -> MaterialTheme.colorScheme.inversePrimary
+                        "Газ" -> MaterialTheme.colorScheme.onSurface
                         else -> Color.Yellow
                     },
                     painter = painterResource(
@@ -169,15 +192,24 @@ fun CounterCard(
                         style = MaterialTheme.typography.titleMedium,
                         textAlign = TextAlign.Center
                     )
-                    Text(
-                        text = "Номер ИПУ: ${meteringDevice.serial_number}",
-                        style = MaterialTheme.typography.bodyMedium,
-                        textAlign = TextAlign.Center
-                    )
+                    Row(
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = "Номер ИПУ: ",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.outline,
+                        )
+                        Text(
+                            text = "${meteringDevice.serial_number}",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.tertiary,
+                        )
+                    }
                 }
             }
 
-            if (isCurrentMonthAndYear[meteringDevice.serial_number]?.isCurrentMonthAndYear == false){
+            if (isCurrentMonthAndYear[meteringDevice.serial_number]?.isCurrentMonthAndYear == false) {
                 OutlinedTextField(
                     value = inputValue,
                     onValueChange = {
@@ -185,7 +217,10 @@ fun CounterCard(
                     },
                     label = { Text(text = "Показания") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    placeholder = { lastMeterReadingsMap[meteringDevice.serial_number]?.value?.toString()?.let { Text(text = it) } },
+                    placeholder = {
+                        lastMeterReadingsMap[meteringDevice.serial_number]?.value?.toString()
+                            ?.let { Text(text = it) }
+                    },
                     singleLine = true,
                     isError = isError.value,
                     modifier = Modifier
@@ -194,21 +229,54 @@ fun CounterCard(
             }
 
 
-            Text(
-                text = "Прошлые показания: ${lastMeterReadingsMap[meteringDevice.serial_number]?.value ?: "Нет данных"}",
-                style = MaterialTheme.typography.bodySmall
-            )
-            Text(
-                text = "Дата поверки: ${meteringDevice.verification_date}",
-                style = MaterialTheme.typography.bodySmall
-            )
-            // Уведомление
-
-            if (isCurrentMonthAndYear[meteringDevice.serial_number]?.isCurrentMonthAndYear == true){
-                Notify(icon = R.drawable.baseline_security_update_good_24, text = "Показания успешно переданы", boolean = false)
-            }else{
-                Notify(icon = R.drawable.baseline_assignment_late_24, text = "Передайте показания до 26 числа текущего месяца", boolean = true)
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Прошлые показания: ",
+                    color = MaterialTheme.colorScheme.outline,
+                    style = MaterialTheme.typography.bodySmall
+                )
+                Text(
+                    text = "${lastMeterReadingsMap[meteringDevice.serial_number]?.value ?: "Нет данных"}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.tertiary,
+                )
             }
+
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Дата поверки: ",
+                    color = MaterialTheme.colorScheme.outline,
+                    style = MaterialTheme.typography.bodySmall
+                )
+                Text(
+                    text = "${meteringDevice.verification_date}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.tertiary,
+                )
+            }
+
+            // Уведомление
+            if (isCurrentMonthAndYear[meteringDevice.serial_number]?.isCurrentMonthAndYear == true) {
+                Notify(
+                    icon = R.drawable.baseline_security_update_good_24,
+                    text = "Показания успешно переданы",
+                    boolean = false
+                )
+            } else {
+                Notify(
+                    icon = R.drawable.baseline_assignment_late_24,
+                    text = "Передайте показания до 26 числа текущего месяца",
+                    boolean = true
+                )
+            }
+
+
 
 
             Row(
@@ -219,18 +287,23 @@ fun CounterCard(
             ) {
                 OutlinedButton(
                     colors = ButtonDefaults.filledTonalButtonColors(
-                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                        containerColor = MaterialTheme.colorScheme.primaryContainer
+                        contentColor = MaterialTheme.colorScheme.onSurface,
+                        containerColor = MaterialTheme.colorScheme.inverseOnSurface
                     ),
                     border = null,
                     onClick = {
-
+                        //navController.navigate("detailScreen/${meteringDevice.serial_number}")
+                        val serialNumber = meteringDevice.serial_number
+                        val name = meteringDevice.name
+                        navController.navigate("detailScreen/$serialNumber/$name"){
+                            launchSingleTop = true
+                        }
                     }
                 ) {
                     Text(text = "История показаний")
                 }
 
-                if (isCurrentMonthAndYear[meteringDevice.serial_number]?.isCurrentMonthAndYear == false){
+                if (isCurrentMonthAndYear[meteringDevice.serial_number]?.isCurrentMonthAndYear == false) {
                     OutlinedButton(
                         colors = ButtonDefaults.filledTonalButtonColors(
                             contentColor = MaterialTheme.colorScheme.onPrimary,
@@ -238,10 +311,10 @@ fun CounterCard(
                         ),
                         border = null,
                         onClick = {
-                            if (inputValue.toDoubleOrNull() != null){
+                            if (inputValue.toDoubleOrNull() != null) {
                                 if (inputValue.toDouble() != (lastMeterReadingsMap[meteringDevice.serial_number]?.value
                                         ?: Double.NaN)
-                                ){
+                                ) {
                                     viewModel.addMeterReading(
                                         MeterReading(
                                             serial_number = meteringDevice.serial_number!!,
@@ -250,18 +323,27 @@ fun CounterCard(
                                         )
                                     )
 
-                                    viewModel.checkIfLastReadingIsCurrentMonthAndYear(lastMeterReadingsMap.keys.toList())
+                                    viewModel.checkIfLastReadingIsCurrentMonthAndYear(
+                                        lastMeterReadingsMap.keys.toList()
+                                    )
                                     viewModel.updateLastMeterReadingValue(meteringDevice.serial_number)
-                                    Toast.makeText(context, "Показания успешно переданы", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(
+                                        context,
+                                        "Показания успешно переданы",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                     isError.value = false
                                     inputValue = ""
-                                }
-                                else {
+                                } else {
                                     showDialog.value = true
                                 }
-                            } else{
+                            } else {
                                 isError.value = true
-                                Toast.makeText(context, "Проверьте коректность данных и внесите показания", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    context,
+                                    "Проверьте коректность данных и внесите показания",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
 
                         }
@@ -330,6 +412,7 @@ fun Notify(icon: Int, text: String, boolean: Boolean) {
         )
     }
 }
+
 fun getCurrentDate(): Date {
     val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
     val currentDate = Date()

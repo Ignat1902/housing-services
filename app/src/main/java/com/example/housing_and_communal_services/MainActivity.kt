@@ -12,7 +12,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.example.compose.Housing_and_communal_servicesTheme
 import com.example.housing_and_communal_services.navigation.SetupNavGraph
-import com.example.housing_and_communal_services.screens.authorization.LoginViewModel
+import com.example.housing_and_communal_services.view_models.LoginViewModel
 
 
 class MainActivity : ComponentActivity() {

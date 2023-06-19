@@ -25,13 +25,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.example.housing_and_communal_services.R
-import com.example.housing_and_communal_services.repository.AuthRepository
-import com.example.housing_and_communal_services.repository.FirebaseRequest
+import com.example.housing_and_communal_services.data.repositories.AuthRepository
+import com.example.housing_and_communal_services.data.repositories.FirebaseRequest
 import com.example.housing_and_communal_services.showBars
+import com.example.housing_and_communal_services.view_models.LoginViewModel
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthCredential
@@ -51,7 +50,6 @@ fun RegistrationTelephonePage(
     val isError = remember { mutableStateOf(false) }
     val context = LocalContext.current
     showBars(flag = true)
-
     // on below line creating variable for course name,
     // course duration and course description.
 
@@ -63,9 +61,7 @@ fun RegistrationTelephonePage(
         mutableStateOf("")
     }
 
-    // on below line creating variable
-    // for firebase auth and callback
-    val mAuth: FirebaseAuth = FirebaseAuth.getInstance();
+    val mAuth: FirebaseAuth = FirebaseAuth.getInstance()
     lateinit var callbacks: PhoneAuthProvider.OnVerificationStateChangedCallbacks
 
     Column(
@@ -77,7 +73,7 @@ fun RegistrationTelephonePage(
             .padding(horizontal = 32.dp)
     ) {
         Text(
-            stringResource(R.string.registration_name),
+            "Вход",
             modifier = Modifier.padding(top = 24.dp),
             style = MaterialTheme.typography.displayMedium,
             color = MaterialTheme.colorScheme.onBackground
@@ -199,7 +195,7 @@ fun RegistrationTelephonePage(
                 // on below line displaying error as toast message.
                 Toast.makeText(
                     context,
-                    "Скорее всего некорректно введен номер телефона",
+                    p0.localizedMessage,
                     Toast.LENGTH_SHORT
                 ).show()
             }

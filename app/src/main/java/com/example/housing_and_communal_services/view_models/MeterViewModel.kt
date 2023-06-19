@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.housing_and_communal_services.data.models.MeterReading
 import com.example.housing_and_communal_services.data.models.MeterStatus
@@ -75,7 +76,7 @@ class MeterViewModel(private val repository: MeteringDeviceRepository) : ViewMod
                         set(Calendar.MILLISECOND, 0)
                     }.time
 
-                    lastReadingDate == currentMonthAndYear && lastReadingDate == currentMonthAndYear
+                    lastReadingDate.month == currentMonthAndYear.month && lastReadingDate.year == currentMonthAndYear.year
                 } ?: false
 
                 meterStatuses[serialNumber] = MeterStatus(isCurrentMonthAndYear, serialNumber)
@@ -84,8 +85,11 @@ class MeterViewModel(private val repository: MeteringDeviceRepository) : ViewMod
         }
     }
 
-}
+    fun getMeterReadings(serialNumber: String): LiveData<List<MeterReading>> {
+        return repository.getMeterReadings(serialNumber).asLiveData()
+    }
 
+}
 class MeterViewModelFactory(private val repository: MeteringDeviceRepository) :
     ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
