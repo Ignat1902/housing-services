@@ -45,6 +45,7 @@ class ServicesRepository {
             firestore.collection("Request")
                 .add(request)
                 .await()
+            Toast.makeText(context, "Заявка успешно оставлена!", Toast.LENGTH_LONG).show()
         } catch (e: Exception) {
             Toast.makeText(context, "Ошибка $e", Toast.LENGTH_LONG).show()
         }

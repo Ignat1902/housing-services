@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Housing_and_communal_services</string>
+    <string name="app_name">ЖКХ вашего дома</string>
     <string name="registration">Регистрация</string>
     <string name="personal_account_number">Номер личного счета</string>
     <string name="authorization">Вход</string>

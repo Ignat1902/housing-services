@@ -73,11 +73,23 @@ fun RequestScreen(servicesViewModel: ServicesViewModel) {
                     RequestCard(title = request.title, date = request.date, status = request.status)
                 }
             }
-        } else {
+        } else if (!filteredEndRequest.value.isEmpty()) {
             LazyColumn {
                 items(filteredEndRequest.value) { request ->
                     RequestCard(title = request.title, date = request.date, status = request.status)
                 }
+            }
+        }else{
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    "Нет завершенных заявок",
+                    modifier = Modifier.padding(top = 24.dp),
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.titleMedium,
+                )
             }
         }
 

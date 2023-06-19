@@ -37,13 +37,6 @@ fun ServiceCard(
         modifier = Modifier.padding(16.dp)
     ) {
         Column {
-            /*Image(
-                painter = painterResource(id = image),
-                contentDescription = "Sample Image",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
-            )*/
             Column(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
             ) {
