@@ -1,49 +1,77 @@
 # Приложение для услуг ЖКХ
-Данный репозиторий содержит исходный код приложения для услуг ЖКХ. Это приложение предоставляет удобный интерфейс для пользователей, чтобы они могли получать доступ к различным услугам, связанным с жилищно-коммунальным хозяйством.
-Возможности:
-1. Регистрация и аутентификация пользователей;
-2. Отправка показаний приборов учета и отслеживание истории показаний;
-3. Отправка заявок на ЖКХ услуги;
-4. Просмотр истории заявок;
-5. Уведомления о передачи показаний по приборам учета;
-6. Актуальные новости от ЖКХ;
 
-# Скриншоты экранов мобильного приложения
+<p>
+Данный репозиторий содержит исходный код приложения для услуг ЖКХ. Это приложение предоставляет
+удобный интерфейс для пользователей, чтобы они могли получать доступ к различным услугам, связанным
+с жилищно-коммунальным хозяйством.
+</p>
 
-## 1. Экран заставки
+## Функциональные возможности:
+- Регистрация и аутентификация пользователей
+- Отправка показаний приборов учета и отслеживание истории показаний
+- Отправка заявок на ЖКХ услуги
+- Просмотр истории заявок
+- Уведомления о передачи показаний по приборам учета
+- Актуальные новости от ЖКХ
 
-![Заставка](https://github.com/Ignat1902/Housing_and_communal_services/assets/55736900/d5b666e0-1c71-4ee0-8c80-f35bdc4c5634)
+## Использованный стек технологий:
 
-## 2. Экран приветствия
+- **Kotlin**
+- **Coroutines**
+- **Jetpack Compose**
+- **Jetpack Navigation**
+- **Firebase Firestore**
 
-![Регистрация и вход](https://github.com/Ignat1902/Housing_and_communal_services/assets/55736900/0f5e982d-2f3f-4ec6-be22-5596b0cc472f)
+# Скриншоты приложения:
 
-## 3. Экран входа
+- ### Заставка и экран приветствия
+    <div style="display: flex; align-items: center; justify-content: start;">
+    <img src="screenshots/splash_screen.jpg" alt="Splash Screen" height="400"/>
+    <span style="font-size: 48px; margin: 0 20px;">→</span>
+    <img src="screenshots/welcome_screen.jpg" alt="Splash Screen" height="400"/>
+</div>
 
-![Вход](https://github.com/Ignat1902/Housing_and_communal_services/assets/55736900/db8b7041-2cdd-4988-bfd2-fefd84f9b8dc)
+- ### Аутентификации пользователя
+    <img src="screenshots/authentication.jpg" alt="Splash Screen" height="400"/>
+    <span style="margin: 0 20px;"></span>
+    <img src="screenshots/authorization_by_phone_number.jpg" alt="Authorization by phone number" height="400">
 
-## 4. Экран регистрация и все связанные с ним экраны
+- ### Регистрация
+    <div style="display: flex; align-items: center; justify-content: start;">
+        <img src="screenshots/registration_apartment_search.jpg" alt="Apartment search" height="400"/>
+        <span style="font-size: 48px; margin: 0 20px;">→</span>
+        <img src="screenshots/registration_input_info.jpg" alt="Input data" height="400"/>
+    </div>
 
-![Регистрация](https://github.com/Ignat1902/Housing_and_communal_services/assets/55736900/69d0fcf1-323f-485d-88d3-283ed741f617)
+- ### Сброс пароля
+    <img src="screenshots/password_reset.jpg" alt="Forgot password" height="400"/>
 
-## 5. Экран сброса пароля
+ - ### Главная
+    <img src="screenshots/main.jpg" alt="Main screen" height="400"/>
 
-![Сброс пароля](https://github.com/Ignat1902/Housing_and_communal_services/assets/55736900/867456dc-8516-4331-a076-8a4fa9cc8bcf)
+- ### Профиль
+    <img src="screenshots/profile.jpg" alt="Profile" height="400"/>
 
-## 6. Экран счетчики и все связанные с ним экраны
+- ### Приборы учета
+    <div style="display: flex; align-items: center; justify-content: start;">
+        <img src="screenshots/meter_devices_1.jpg" alt="Transmission of readings" height="400"/>
+        <span style="margin: 0 20px;"></span>
+        <img src="screenshots/meter_devices_2.jpg" alt="The testimony was transmitted" height="400"/>
+        <span style="margin: 0 20px;"></span>
+        <img src="screenshots/history_meter_reading.jpg" alt="Meter reading history" height="400"/>
+    </div>
 
-![Счетчики](https://github.com/Ignat1902/Housing_and_communal_services/assets/55736900/79c0c631-60ee-482e-98cc-50fe193fe565)
+- ### Список услуг
+    <img src="screenshots/services.jpg" alt="List services" height="400"/>
 
-## 7. Экран услуг
+- ### Заявки на услуги
+    <div style="display: flex; align-items: center; justify-content: start;">
+        <img src="screenshots/request_in_processing.jpg" alt="Request in processing" height="400"/>
+        <span style="margin: 0 20px;"></span>
+        <img src="screenshots/request_completed.jpg" alt="Request completed" height="400"/> 
+    </div>
 
-![Услуги](https://github.com/Ignat1902/Housing_and_communal_services/assets/55736900/03003862-8776-4c96-b8fa-98e1642abb91)
-
-## 8. Экран заявок
-
-![Заявки](https://github.com/Ignat1902/Housing_and_communal_services/assets/55736900/5d3efec5-3dca-4fcb-8a6f-779a0a24ab75)
-
-## 9. Экран новости
-
-![Новости](https://github.com/Ignat1902/Housing_and_communal_services/assets/55736900/e69b17c0-e3f9-4da5-8c19-399abe30d07b)
+- ### Экран новости
+    <img src="screenshots/news.jpg" alt="Request completed" height="400"/>
 
 
