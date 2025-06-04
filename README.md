@@ -25,23 +25,16 @@
 # Скриншоты приложения:
 
 - ### Заставка и экран приветствия
-    <div style="display: flex; align-items: center; justify-content: start;">
     <img src="screenshots/splash_screen.jpg" alt="Splash Screen" height="400"/>
-    <span style="font-size: 48px; margin: 0 20px;">→</span>
     <img src="screenshots/welcome_screen.jpg" alt="Splash Screen" height="400"/>
-</div>
 
 - ### Аутентификации пользователя
     <img src="screenshots/authentication.jpg" alt="Splash Screen" height="400"/>
-    <span style="margin: 0 20px;"></span>
     <img src="screenshots/authorization_by_phone_number.jpg" alt="Authorization by phone number" height="400">
 
 - ### Регистрация
-    <div style="display: flex; align-items: center; justify-content: start;">
-        <img src="screenshots/registration_apartment_search.jpg" alt="Apartment search" height="400"/>
-        <span style="font-size: 48px; margin: 0 20px;">→</span>
-        <img src="screenshots/registration_input_info.jpg" alt="Input data" height="400"/>
-    </div>
+    <img src="screenshots/registration_apartment_search.jpg" alt="Apartment search" height="400"/>
+    <img src="screenshots/registration_input_info.jpg" alt="Input data" height="400"/>
 
 - ### Сброс пароля
     <img src="screenshots/password_reset.jpg" alt="Forgot password" height="400"/>
@@ -53,23 +46,17 @@
     <img src="screenshots/profile.jpg" alt="Profile" height="400"/>
 
 - ### Приборы учета
-    <div style="display: flex; align-items: center; justify-content: start;">
-        <img src="screenshots/meter_devices_1.jpg" alt="Transmission of readings" height="400"/>
-        <span style="margin: 0 20px;"></span>
-        <img src="screenshots/meter_devices_2.jpg" alt="The testimony was transmitted" height="400"/>
-        <span style="margin: 0 20px;"></span>
-        <img src="screenshots/history_meter_reading.jpg" alt="Meter reading history" height="400"/>
-    </div>
+    <img src="screenshots/meter_devices_1.jpg" alt="Transmission of readings" height="400"/>
+    <img src="screenshots/meter_devices_2.jpg" alt="The testimony was transmitted" height="400"/>
+    <img src="screenshots/history_meter_reading.jpg" alt="Meter reading history" height="400"/>
 
 - ### Список услуг
     <img src="screenshots/services.jpg" alt="List services" height="400"/>
 
 - ### Заявки на услуги
-    <div style="display: flex; align-items: center; justify-content: start;">
-        <img src="screenshots/request_in_processing.jpg" alt="Request in processing" height="400"/>
-        <span style="margin: 0 20px;"></span>
-        <img src="screenshots/request_completed.jpg" alt="Request completed" height="400"/> 
-    </div>
+    <img src="screenshots/request_in_processing.jpg" alt="Request in processing" height="400"/>
+    <span style="margin: 0 20px;"></span>
+    <img src="screenshots/request_completed.jpg" alt="Request completed" height="400"/> 
 
 - ### Экран новости
     <img src="screenshots/news.jpg" alt="Request completed" height="400"/>
