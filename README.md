@@ -26,10 +26,10 @@
 
 - ### Заставка и экран приветствия
     <img src="screenshots/splash_screen.jpg" alt="Splash Screen" height="400"/>
-    <img src="screenshots/welcome_screen.jpg" alt="Splash Screen" height="400"/>
+    <img src="screenshots/welcome_screen.jpg" alt="Welcome Screen" height="400"/>
 
 - ### Аутентификации пользователя
-    <img src="screenshots/authentication.jpg" alt="Splash Screen" height="400"/>
+    <img src="screenshots/authentication.jpg" alt="Authentication screen" height="400"/>
     <img src="screenshots/authorization_by_phone_number.jpg" alt="Authorization by phone number" height="400">
 
 - ### Регистрация
